@@ -10,13 +10,14 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.company.andrzej.rolki.cardsdeck.Component.ServiceComponent;
 import com.company.andrzej.rolki.cardsdeck.model.Card;
+import com.company.andrzej.rolki.cardsdeck.model.Cards;
 import com.company.andrzej.rolki.cardsdeck.model.Deck;
 import com.company.andrzej.rolki.cardsdeck.service.CardService;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -48,9 +49,8 @@ public class MainActivity extends AppCompatActivity {
     Retrofit retrofit;
 
     CardService.CardAPI cardApi;
-    ServiceComponent serviceComponent;
     String deckID;
-    private ArrayList<Card> cardsArray = new ArrayList<Card>();
+    List<Card> cardsArray = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,38 +71,37 @@ public class MainActivity extends AppCompatActivity {
         spinnerDecks.setAdapter(adapter);
     }
 
-    private void getCards(String deck_id, int ammount) {
+    private void getCards(final String deck_id, final int count) {
         retrofit = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         cardApi = retrofit.create(CardService.CardAPI.class);
-        cardApi.getCard(deck_id, ammount)
+        cardApi.getCards(deck_id, count)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Card>() {
+                .subscribe(new Observer<Cards>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(@NonNull Card card) {
-                        Log.d("KARRRTAAA", String.valueOf(card));
-                        Toast.makeText(getApplicationContext(), "completed" + card.getSuit(), Toast.LENGTH_SHORT).show();
-                        cardsArray.add(card);
-                        cardsArray.size();
+                    public void onNext(@NonNull Cards cards) {
+                        Log.d("ARRRRRRRRRRRRAYYYYYYY", String.valueOf(cards));
+                        cardsArray = cards.getArrayCards();
                     }
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-                        Log.d("Error", String.valueOf(e));
-
+                    Log.d("FADSFAFASDFAFS", String.valueOf(e));
                     }
 
                     @Override
                     public void onComplete() {
+
+                        Toast.makeText(getApplicationContext(), String.valueOf(cardsArray), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -128,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onNext(@NonNull Deck deck) {
                         deckID = deck.getDeck_id();
-                        Toast.makeText(getApplicationContext(), String.valueOf(deck.getDeck_id()), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -159,6 +157,6 @@ public class MainActivity extends AppCompatActivity {
 //        transaction.addToBackStack(null);
 //        transaction.commit();
 
-        getCards(deckID, 1);
+        getCards(deckID, 5);
     }
 }

@@ -6,25 +6,24 @@ package com.company.andrzej.rolki.cardsdeck.model;
 
 public class Card  {
 
-    private String imageUrl;
-    private String value;
+    private String image;
+    private int value;
     private String suit;
     private String code;
 
-
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImage() {
+        return image;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
     }
 

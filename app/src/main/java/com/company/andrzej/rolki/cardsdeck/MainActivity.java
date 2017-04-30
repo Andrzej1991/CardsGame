@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         configureSpinnerData();
+        retrofitBuild();
         imageAdapter = new ImageAdapter(getApplicationContext(), imgUrls);
         grid.setAdapter(imageAdapter);
     }
@@ -106,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getCards(final String deck_id, final int count) {
-        retrofitBuild();
         cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.getCards(deck_id, count)
                 .subscribeOn(Schedulers.newThread())
@@ -146,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getDecks(final int count) {
-        retrofitBuild();
         cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.getDeck(count)
                 .subscribeOn(Schedulers.newThread())
@@ -177,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void shuffleDeck(final String deck_id) {
-        retrofitBuild();
         cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.shuffleDeck(deck_id)
                 .subscribeOn(Schedulers.newThread())

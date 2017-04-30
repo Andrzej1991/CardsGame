@@ -1,6 +1,10 @@
 package com.company.andrzej.rolki.cardsdeck;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -10,6 +14,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -64,11 +69,12 @@ public class MainActivity extends AppCompatActivity {
     @Inject
     Retrofit retrofit;
 
-    CardService.CardAPI cardApi;
-    String deckID;
-    List<Card> cardsArray = new ArrayList<>();
-    List<String> imgUrls = new ArrayList<>();
-    int cardss;
+    private CardService.CardAPI cardApi;
+    private String deckID;
+    private List<Card> cardsArray = new ArrayList<>();
+    private List<String> imgUrls = new ArrayList<>();
+    private int cardsRemaining;
+    private ImageAdapter imageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         configureSpinnerData();
+        imageAdapter = new ImageAdapter(getApplicationContext(), imgUrls);
+        grid.setAdapter(imageAdapter);
     }
 
     private void configureSpinnerData() {
@@ -88,14 +96,17 @@ public class MainActivity extends AppCompatActivity {
         spinnerDecks.setAdapter(adapter);
     }
 
-    private void getCards(final String deck_id, final int count) {
+    private void retrofitBuild() {
         Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new StringTypeAdapter()).create();
         retrofit = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
+    }
 
+    private void getCards(final String deck_id, final int count) {
+        retrofitBuild();
         cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.getCards(deck_id, count)
                 .subscribeOn(Schedulers.newThread())
@@ -112,8 +123,8 @@ public class MainActivity extends AppCompatActivity {
                         for (Card item : cardsArray) {
                             imgUrls.add(item.getImage());
                         }
-                        grid.setAdapter(new ImageAdapter(getApplicationContext(), imgUrls));
-                        cardss = cards.getRemaining();
+                        cardsRemaining = cards.getRemaining();
+                        imageAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -127,13 +138,15 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    public boolean checkInternetConnection() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
     private void getDecks(final int count) {
-        retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
+        retrofitBuild();
         cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.getDeck(count)
                 .subscribeOn(Schedulers.newThread())
@@ -164,11 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void shuffleDeck(final String deck_id) {
-        retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
+        retrofitBuild();
         cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.shuffleDeck(deck_id)
                 .subscribeOn(Schedulers.newThread())
@@ -197,39 +206,49 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+
     @OnClick(R.id.buttonStart)
     public void openGameFragment() {
-        int count = (int) spinnerDecks.getSelectedItem();
-        getDecks(count);
-        configureRetrofitRequest();
-
+        if (!checkInternetConnection()) {
+            Toast.makeText(getApplicationContext(), "Please check internet connetion...", Toast.LENGTH_SHORT).show();
+        } else {
+            int count = (int) spinnerDecks.getSelectedItem();
+            getDecks(count);
+            configureRetrofitRequest();
+        }
     }
 
-    private void createAlersDialogForShuffle() {
+    private void createAlertDialogForShuffle() {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.myDialog));
-                builder.setMessage("Are you sure to shuffle the decks?");
-                builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        shuffleDeck(deckID);
-                    }
-                });
-                builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
+        builder.setMessage("Are you sure to shuffle the decks?");
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                shuffleDeck(deckID);
+            }
+        });
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
         builder.setIcon(android.R.drawable.ic_dialog_alert);
-        builder.show();
+        AlertDialog alert = builder.create();
+        alert.show();
+        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        nbutton.setTextColor(Color.BLACK);
+        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbutton.setTextColor(Color.BLACK);
     }
 
     @OnClick(R.id.get_next_card)
     public void nextCard() {
-        cardss--;
-        if (cardss == 0) {
-            createAlersDialogForShuffle();
+        if (cardsRemaining == 0) {
+            cardsRemaining = 1;
+            createAlertDialogForShuffle();
             Toast.makeText(getApplicationContext(), "Please shuffle  the decks..", Toast.LENGTH_SHORT).show();
         } else {
             getCards(deckID, 1);
+            cardsRemaining--;
         }
     }
 

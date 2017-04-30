@@ -18,7 +18,6 @@ public class StringTypeAdapter extends TypeAdapter<String> {
     @Override
     public void write(JsonWriter out, String value) throws IOException {
         if (Objects.equals(value, "ACE")) {
-            value= String.valueOf(1);
             return;
         }
         out.value(value);

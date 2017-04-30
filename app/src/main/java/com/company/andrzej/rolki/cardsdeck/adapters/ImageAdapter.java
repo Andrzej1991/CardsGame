@@ -1,6 +1,7 @@
 package com.company.andrzej.rolki.cardsdeck.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,32 +18,29 @@ import java.util.List;
  */
 
 public class ImageAdapter extends ArrayAdapter {
-    private Context context;
-    private LayoutInflater inflater;
 
+    private Context context;
     private List<String> imageUrls;
 
     public ImageAdapter(Context context, List<String> imageUrls) {
         super(context, R.layout.imt_image, imageUrls);
-
         this.context = context;
         this.imageUrls = imageUrls;
-
-        inflater = LayoutInflater.from(context);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (null == convertView) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (convertView == null) {
             convertView = inflater.inflate(R.layout.imt_image, parent, false);
         }
-
         Picasso
                 .with(context)
                 .load(imageUrls.get(position))
-                .fit() // will explain later
+                .fit()
+                .centerCrop()
                 .into((ImageView) convertView);
-
         return convertView;
     }
 }

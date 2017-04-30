@@ -27,5 +27,8 @@ public class CardService {
 
         @GET("{deck_id}/draw")
         Observable<Cards> getCards(@Path("deck_id") String deck_id, @Query("count") int count);
+
+        @GET("{deck_id}/shuffle")
+        Observable<Deck> shuffleDeck(@Path("deck_id")String deck_id);
     }
 }

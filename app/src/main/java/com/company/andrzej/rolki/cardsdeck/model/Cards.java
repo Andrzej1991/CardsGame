@@ -44,5 +44,4 @@ public class Cards  {
     private List<Card> cards;
     private String deck_id;
     private int remaining;
-
 }

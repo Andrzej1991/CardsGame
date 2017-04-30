@@ -4,10 +4,10 @@ package com.company.andrzej.rolki.cardsdeck.model;
  * Created by Andrzej on 2017-04-28.
  */
 
-public class Card  {
+public class Card {
 
     private String image;
-    private int value;
+    private String value;
     private String suit;
     private String code;
 
@@ -19,11 +19,11 @@ public class Card  {
         this.image = image;
     }
 
-    public int getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

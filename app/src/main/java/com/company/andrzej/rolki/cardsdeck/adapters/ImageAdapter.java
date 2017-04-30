@@ -1,48 +1,48 @@
 package com.company.andrzej.rolki.cardsdeck.adapters;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+
+import com.company.andrzej.rolki.cardsdeck.R;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 /**
  * Created by Andrzej on 2017-04-28.
  */
 
-public class ImageAdapter extends BaseAdapter {
-
+public class ImageAdapter extends ArrayAdapter {
     private Context context;
+    private LayoutInflater inflater;
 
-    private Integer[] images = {
-    };
+    private List<String> imageUrls;
 
-    public ImageAdapter(Context context, Integer[] images){
+    public ImageAdapter(Context context, List<String> imageUrls) {
+        super(context, R.layout.imt_image, imageUrls);
+
         this.context = context;
-        this.images = images;
-    }
+        this.imageUrls = imageUrls;
 
-    @Override
-    public int getCount() {
-        return images.length;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return images[position];
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
+        inflater = LayoutInflater.from(context);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView = new ImageView(context);
-        imageView.setImageResource(images[position]);
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(new GridView.LayoutParams(70, 70));
-        return imageView;
-    }   }
+        if (null == convertView) {
+            convertView = inflater.inflate(R.layout.imt_image, parent, false);
+        }
+
+        Picasso
+                .with(context)
+                .load(imageUrls.get(position))
+                .fit() // will explain later
+                .into((ImageView) convertView);
+
+        return convertView;
+    }
+}

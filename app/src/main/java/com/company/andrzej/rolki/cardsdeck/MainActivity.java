@@ -21,15 +21,14 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.company.andrzej.rolki.cardsdeck.Component.DaggerServiceComponent;
+import com.company.andrzej.rolki.cardsdeck.Component.ServiceComponent;
+import com.company.andrzej.rolki.cardsdeck.Module.ServiceModule;
 import com.company.andrzej.rolki.cardsdeck.adapters.ImageAdapter;
-import com.company.andrzej.rolki.cardsdeck.adapters.StringTypeAdapter;
 import com.company.andrzej.rolki.cardsdeck.model.Card;
 import com.company.andrzej.rolki.cardsdeck.model.Cards;
 import com.company.andrzej.rolki.cardsdeck.model.Deck;
 import com.company.andrzej.rolki.cardsdeck.service.CardService;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,6 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Andrzej on 2017-04-28.
@@ -66,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.linear_second)
     LinearLayout linearSecond;
 
+    ServiceComponent serviceComponent;
+
     @Inject
     Retrofit retrofit;
 
@@ -85,7 +85,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         configureSpinnerData();
-        retrofitBuild();
+        serviceComponent = DaggerServiceComponent.builder()
+                .serviceModule(new ServiceModule(url))
+                .build();
+        serviceComponent.inject(this);
+        cardApi = retrofit.create(CardService.CardAPI.class);
         imageAdapter = new ImageAdapter(getApplicationContext(), imgUrls);
         grid.setAdapter(imageAdapter);
     }
@@ -97,17 +101,7 @@ public class MainActivity extends AppCompatActivity {
         spinnerDecks.setAdapter(adapter);
     }
 
-    private void retrofitBuild() {
-        Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new StringTypeAdapter()).create();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-    }
-
     private void getCards(final String deck_id, final int count) {
-        cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.getCards(deck_id, count)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -146,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getDecks(final int count) {
-        cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.getDeck(count)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -176,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void shuffleDeck(final String deck_id) {
-        cardApi = retrofit.create(CardService.CardAPI.class);
         cardApi.shuffleDeck(deck_id)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())

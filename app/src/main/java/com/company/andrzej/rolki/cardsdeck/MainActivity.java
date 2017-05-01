@@ -10,12 +10,13 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -24,7 +25,7 @@ import android.widget.Toast;
 import com.company.andrzej.rolki.cardsdeck.Component.DaggerServiceComponent;
 import com.company.andrzej.rolki.cardsdeck.Component.ServiceComponent;
 import com.company.andrzej.rolki.cardsdeck.Module.ServiceModule;
-import com.company.andrzej.rolki.cardsdeck.adapters.ImageAdapter;
+import com.company.andrzej.rolki.cardsdeck.adapters.CardsRecyclerView;
 import com.company.andrzej.rolki.cardsdeck.model.Card;
 import com.company.andrzej.rolki.cardsdeck.model.Cards;
 import com.company.andrzej.rolki.cardsdeck.model.Deck;
@@ -55,26 +56,27 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.spinnerDecks)
     Spinner spinnerDecks;
-    @BindView(R.id.usage_example_gridview)
-    GridView grid;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
     @BindView(R.id.linear_main)
     LinearLayout linearMain;
     @BindView(R.id.linear_second)
     LinearLayout linearSecond;
+    @BindView(R.id.my_recycler_view)
+    RecyclerView recyclerView;
 
     ServiceComponent serviceComponent;
 
     @Inject
     Retrofit retrofit;
 
+
+    private RecyclerView.Adapter cardsRecyclerView;
     private CardService.CardAPI cardApi;
     private String deckID;
     private List<Card> cardsArray = new ArrayList<>();
     private List<String> imgUrls = new ArrayList<>();
     private int cardsRemaining;
-    private ImageAdapter imageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,16 +92,16 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         serviceComponent.inject(this);
         cardApi = retrofit.create(CardService.CardAPI.class);
-        imageAdapter = new ImageAdapter(getApplicationContext(), imgUrls);
-        grid.setAdapter(imageAdapter);
+        configureRecyclerView();
     }
 
-    private void configureSpinnerData() {
-        Integer[] items = new Integer[]{1, 2, 3, 4, 5};
-        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, items);
-        spinnerDecks.setAdapter(adapter);
+    private void configureRecyclerView() {
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 5);
+        recyclerView.setLayoutManager(layoutManager);
+        cardsRecyclerView = new CardsRecyclerView(getApplicationContext(), imgUrls);
+        recyclerView.setAdapter(cardsRecyclerView);
     }
+
 
     private void getCards(final String deck_id, final int count) {
         cardApi.getCards(deck_id, count)
@@ -118,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
                             imgUrls.add(item.getImage());
                         }
                         cardsRemaining = cards.getRemaining();
-                        imageAdapter.notifyDataSetChanged();
+                        cardsRecyclerView.notifyDataSetChanged();
+                        recyclerView.smoothScrollToPosition(cardsRecyclerView.getItemCount() - 1);
                     }
 
                     @Override
@@ -240,6 +243,13 @@ public class MainActivity extends AppCompatActivity {
             getCards(deckID, 1);
             cardsRemaining--;
         }
+    }
+
+    private void configureSpinnerData() {
+        Integer[] items = new Integer[]{1, 2, 3, 4, 5};
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, items);
+        spinnerDecks.setAdapter(adapter);
     }
 
     private void configureRetrofitRequest() {

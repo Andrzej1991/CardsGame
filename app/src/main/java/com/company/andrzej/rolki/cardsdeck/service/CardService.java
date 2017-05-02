@@ -19,17 +19,17 @@ public class CardService {
 
         //GET NEW DECK
         @GET("new/shuffle")
-        Observable<Deck> getDeck(@Query("deck_count") int deck_count);
+        Observable<Deck> fetchDeck(@Query("deck_count") int deck_count);
 
         //GET CARD
         @GET("{deck_id}/draw")
-        Observable<Card> getCardFromDeckID(@Path("deck_id") String deck_id,
-                                           @Query("count") int count);
+        Observable<Card> fetchCardFromDeckID(@Path("deck_id") String deck_id,
+                                             @Query("count") int count);
 
         //GET CARDS
         @GET("{deck_id}/draw")
-        Observable<CardsArray> getCardsFromDeckID(@Path("deck_id") String deck_id,
-                                                  @Query("count") int count);
+        Observable<CardsArray> fetchCardsFromDeckID(@Path("deck_id") String deck_id,
+                                                    @Query("count") int count);
 
         //SHUFFLEDECK
         @GET("{deck_id}/shuffle")

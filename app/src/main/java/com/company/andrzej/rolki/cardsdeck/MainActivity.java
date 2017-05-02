@@ -26,6 +26,7 @@ import com.company.andrzej.rolki.cardsdeck.model.Card;
 import com.company.andrzej.rolki.cardsdeck.model.CardsArray;
 import com.company.andrzej.rolki.cardsdeck.model.Deck;
 import com.company.andrzej.rolki.cardsdeck.module.ServiceModule;
+import com.company.andrzej.rolki.cardsdeck.presenters.MainActivityPresenter;
 import com.company.andrzej.rolki.cardsdeck.service.CardService;
 
 import java.util.ArrayList;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private int checkFiguryRank = 0;
     private int checkCardsBlackInt = 0;
     private int checkCardsRedInt = 0;
+    private MainActivityPresenter presenter;
     private boolean isCheckedForDuplicates = true;
     private boolean isCheckedForFigury = true;
     private boolean isCheckedColorRed = true;
@@ -99,13 +101,23 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        injectServiceComponent();
         configureSpinnerData();
         configureRecyclerView();
+        presenter = new MainActivityPresenter(this);
+        presenter.onAttachActivity(savedInstanceState, this);
+        injectServiceComponent();
+    }
+
+    public void injectServiceComponent() {
+        serviceComponent = DaggerServiceComponent.builder()
+                .serviceModule(new ServiceModule(url))
+                .build();
+        serviceComponent.inject(this);
+        cardApi = retrofit.create(CardService.CardAPI.class);
     }
 
     private void getCards(final String deck_id, final int count) {
-        cardApi.getCardsFromDeckID(deck_id, count)
+        cardApi.fetchCardsFromDeckID(deck_id, count)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CardsArray>() {
@@ -127,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                         if (isCheckedForFigury) {
                             checkFiguryAchievement();
                         }
-                        if(isCheckedColorBlack || isCheckedColorRed){
+                        if (isCheckedColorBlack || isCheckedColorRed) {
                             checkColorAchievement();
                         }
 //                        checkAscendingOrDescendingAchievement();
@@ -233,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getDecks(final int count) {
-        cardApi.getDeck(count)
+        cardApi.fetchDeck(count)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Deck>() {
@@ -260,39 +272,11 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void shuffleDeck(final String deck_id) {
-        cardApi.shuffleDeck(deck_id)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Deck>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NonNull Deck deck) {
-
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
-
     private void createAlertDialogForShuffle() {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper
                 (this, R.style.myDialog));
         builder.setMessage(this.getString(R.string.are_you_sure_shuffle));
-        builder.setPositiveButton(android.R.string.yes, (dialog, which) -> shuffleDeck(deckID));
+        builder.setPositiveButton(android.R.string.yes, (dialog, which) -> presenter.shuffleDeck(deckID));
         builder.setNegativeButton(android.R.string.no, (dialog, which) -> finish());
         builder.setIcon(android.R.drawable.ic_dialog_alert);
         AlertDialog alert = builder.create();
@@ -326,14 +310,6 @@ public class MainActivity extends AppCompatActivity {
             getCards(deckID, 1);
             cardsRemaining--;
         }
-    }
-
-    private void injectServiceComponent() {
-        serviceComponent = DaggerServiceComponent.builder()
-                .serviceModule(new ServiceModule(url))
-                .build();
-        serviceComponent.inject(this);
-        cardApi = retrofit.create(CardService.CardAPI.class);
     }
 
     private void configureSpinnerData() {

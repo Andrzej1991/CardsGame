@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Andrzej on 2017-04-29.
  */
 
-public class Cards  {
+public class CardsArray {
 
     public boolean isSucces() {
         return succes;

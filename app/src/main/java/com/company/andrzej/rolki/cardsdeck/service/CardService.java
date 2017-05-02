@@ -2,7 +2,7 @@ package com.company.andrzej.rolki.cardsdeck.service;
 
 
 import com.company.andrzej.rolki.cardsdeck.model.Card;
-import com.company.andrzej.rolki.cardsdeck.model.Cards;
+import com.company.andrzej.rolki.cardsdeck.model.CardsArray;
 import com.company.andrzej.rolki.cardsdeck.model.Deck;
 
 import io.reactivex.Observable;
@@ -23,14 +23,16 @@ public class CardService {
 
         //GET CARD
         @GET("{deck_id}/draw")
-        Observable<Card> getCard(@Path("deck_id") String deck_id, @Query("count") int count);
+        Observable<Card> getCardFromDeckID(@Path("deck_id") String deck_id,
+                                           @Query("count") int count);
 
         //GET CARDS
         @GET("{deck_id}/draw")
-        Observable<Cards> getCards(@Path("deck_id") String deck_id, @Query("count") int count);
+        Observable<CardsArray> getCardsFromDeckID(@Path("deck_id") String deck_id,
+                                                  @Query("count") int count);
 
         //SHUFFLEDECK
         @GET("{deck_id}/shuffle")
-        Observable<Deck> shuffleDeck(@Path("deck_id")String deck_id);
+        Observable<Deck> shuffleDeck(@Path("deck_id") String deck_id);
     }
 }

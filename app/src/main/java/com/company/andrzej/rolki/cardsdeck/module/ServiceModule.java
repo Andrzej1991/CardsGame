@@ -15,27 +15,28 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
 public class ServiceModule {
-    String mBaseURL;
 
-    public ServiceModule(String mBaseURL){
+    private String mBaseURL;
+
+    public ServiceModule(String mBaseURL) {
         this.mBaseURL = mBaseURL;
     }
 
     @Provides
     @Singleton
-    GsonConverterFactory provideGson(){
+    GsonConverterFactory provideGson() {
         return GsonConverterFactory.create();
     }
 
     @Provides
     @Singleton
-    RxJava2CallAdapterFactory provideAdapterFactory(){
+    RxJava2CallAdapterFactory provideAdapterFactory() {
         return RxJava2CallAdapterFactory.create();
     }
 
     @Provides
     @Singleton
-    Retrofit provideRetrofit(GsonConverterFactory gson, RxJava2CallAdapterFactory rxJava2CallAdapterFactory ) {
+    Retrofit provideRetrofit(GsonConverterFactory gson, RxJava2CallAdapterFactory rxJava2CallAdapterFactory) {
         return new Retrofit.Builder()
                 .addConverterFactory(gson)
                 .addCallAdapterFactory(rxJava2CallAdapterFactory)

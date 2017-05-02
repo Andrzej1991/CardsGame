@@ -4,7 +4,7 @@ package com.company.andrzej.rolki.cardsdeck.model;
  * Created by Andrzej on 2017-04-28.
  */
 
-public class Deck  {
+public class Deck {
 
     private boolean success;
     private String deck_id;

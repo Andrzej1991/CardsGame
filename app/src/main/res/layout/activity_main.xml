@@ -65,6 +65,7 @@
     </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/frame_recyclerview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="65dp">
@@ -73,6 +74,51 @@
             android:id="@+id/my_recycler_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
             android:scrollbars="vertical" />
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/achievements"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/image_achievement_colorB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_achie_black"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/image_achievement_colorR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_achie_red"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/image_achievement_twins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_achie_stairs"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/image_achievement_figures"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_achie_figures"
+            android:visibility="gone" />
+
+    </LinearLayout>
 </RelativeLayout>

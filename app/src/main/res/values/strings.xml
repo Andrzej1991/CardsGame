@@ -1,16 +1,15 @@
 <resources>
     <string name="app_name">CardsDeck</string>
     <string name="start">Start</string>
-    <string-array name="decksInteger">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="pick_a_new_card">Pick a new card</string>
     <string name="how_many_decks">How many decks?</string>
     <string name="achievements">Achievements:</string>
+    <string name="please_shuffle">"Please shuffle  the decks.."</string>
+    <string name="internet_check">"Please check internet connetion…"</string>
+    <string name="are_you_sure_shuffle">"Are you sure to shuffle the decks?"</string>
+    <string name="figury">"FIGURY"</string>
+    <string name="kolor_czarny">"KOLOR CZARNY"</string>
+    <string name="kolor_czerwony">"KOLOR CZERWONY"</string>
+    <string name="blizniaki">"BLIŻNIAKI"</string>
 </resources>

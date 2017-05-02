@@ -1,5 +1,7 @@
 package com.company.andrzej.rolki.cardsdeck.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -16,7 +18,7 @@ import static java.util.Arrays.asList;
  * Created by Andrzej on 2017-04-28.
  */
 
-public final class Card {
+public final class Card implements Comparable<Card> {
 
     public String getImage() {
         return image;
@@ -35,14 +37,24 @@ public final class Card {
     }
 
     @SerializedName("image")
-    final String image = null;
+    private final String image = null;
     @SerializedName("value")
     @JsonAdapter(RankTypeAdapter.class)
-    final int rank = Integer.valueOf(0);
+    private final int rank = 0;
     @SerializedName("suit")
-    final Suit suit = null;
+    private final Suit suit = null;
     @SerializedName("code")
-    final String code = null;
+    private final String code = null;
+
+    @Override
+    public int compareTo(@NonNull Card other) {
+        if(this.rank == ((Card) other).rank){
+            return 0;
+        }else if((this.rank) > ((Card) other).rank){
+            return 1;
+        }else
+            return -1;
+    }
 }
 
 enum Suit {

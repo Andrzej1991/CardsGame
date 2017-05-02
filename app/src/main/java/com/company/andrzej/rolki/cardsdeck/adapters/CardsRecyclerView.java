@@ -24,7 +24,7 @@ public class CardsRecyclerView extends RecyclerView.Adapter<CardsRecyclerView.Vi
 
         ImageView imageView;
 
-        public ViewHolder(ImageView v) {
+        ViewHolder(ImageView v) {
             super(v);
             imageView = v;
         }
@@ -33,8 +33,6 @@ public class CardsRecyclerView extends RecyclerView.Adapter<CardsRecyclerView.Vi
     @Override
     public CardsRecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ImageView v = (ImageView) LayoutInflater.from(parent.getContext()).inflate(R.layout.imt_image, parent, false);
-        context = parent.getContext();
-
         return new ViewHolder(v);
     }
 

@@ -1,10 +1,7 @@
 package com.company.andrzej.rolki.cardsdeck;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -20,7 +17,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.company.andrzej.rolki.cardsdeck.Component.DaggerServiceComponent;
 import com.company.andrzej.rolki.cardsdeck.Component.ServiceComponent;
@@ -77,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
     private List<Card> cardsArray = new ArrayList<>();
     private List<String> imgUrls = new ArrayList<>();
     private int cardsRemaining;
+    private int checkFiguryRank = 0;
+    private int checkCardsBlackInt = 0;
+    private int checkCardsRedInt = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +120,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                         cardsRemaining = cards.getRemaining();
                         cardsRecyclerView.notifyDataSetChanged();
-                        recyclerView.smoothScrollToPosition(cardsRecyclerView.getItemCount() - 1);
+                        recyclerView.smoothScrollToPosition(cardsRecyclerView.getItemCount());
+                        checkFiguryAchievement();
+                        checkColorAchievement();
+
+
                     }
 
                     @Override
@@ -135,11 +138,40 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public boolean checkInternetConnection() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+    private void checkSchodkiAchievement(){
+        Card card = new Card();
+
+    }
+
+    private void checkColorAchievement() {
+        for (int i = 0; i < cardsArray.size(); i++) {
+            String checkCardsBlack = cardsArray.get(i).getCode();
+            String checkCardsRed = cardsArray.get(i).getCode();
+            if (checkCardsRed.contains("D") || checkCardsRed.contains("H")) {
+                checkCardsRedInt++;
+                if (checkCardsRedInt == 3) {
+                    Utils.showToast(getApplicationContext(), "COLOR RED");
+                }
+            }
+            if (checkCardsBlack.contains("C") || checkCardsBlack.contains("S")) {
+                checkCardsBlackInt++;
+                if (checkCardsBlackInt == 3) {
+                    Utils.showToast(getApplicationContext(), "COLOR BLACK");
+                }
+            }
+        }
+    }
+
+    private void checkFiguryAchievement() {
+        for (int i = 0; i < cardsArray.size(); i++) {
+            int cardRankFigury = cardsArray.get(i).getRank();
+            if (cardRankFigury >= 11)
+                checkFiguryRank++;
+            if (checkFiguryRank == 3) {
+                checkFiguryRank = 4;
+                Utils.showToast(getApplicationContext(), "FIGURY");
+            }
+        }
     }
 
     private void getDecks(final int count) {
@@ -156,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onNext(@NonNull Deck deck) {
                         deckID = deck.getDeck_id();
                         getCards(deckID, 5);
+
+
                     }
 
                     @Override
@@ -202,8 +236,8 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonStart)
     public void openGameFragment() {
-        if (!checkInternetConnection()) {
-            Toast.makeText(getApplicationContext(), "Please check internet connetion...", Toast.LENGTH_SHORT).show();
+        if (!Utils.checkInternetConnection(this.getApplicationContext())) {
+            Utils.showToast(this.getApplicationContext(), "Please check internet connetion...");
         } else {
             int count = (int) spinnerDecks.getSelectedItem();
             getDecks(count);
@@ -217,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 shuffleDeck(deckID);
+
             }
         });
         builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -226,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.setIcon(android.R.drawable.ic_dialog_alert);
         AlertDialog alert = builder.create();
+        alert.setCanceledOnTouchOutside(false);
         alert.show();
         Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
         nbutton.setTextColor(Color.BLACK);
@@ -236,9 +272,9 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.get_next_card)
     public void nextCard() {
         if (cardsRemaining == 0) {
-            cardsRemaining = 1;
+            cardsRemaining = 2;
             createAlertDialogForShuffle();
-            Toast.makeText(getApplicationContext(), "Please shuffle  the decks..", Toast.LENGTH_SHORT).show();
+            Utils.showToast(this.getApplicationContext(), "Please shuffle  the decks..");
         } else {
             getCards(deckID, 1);
             cardsRemaining--;

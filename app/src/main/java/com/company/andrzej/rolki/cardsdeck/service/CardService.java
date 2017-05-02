@@ -21,13 +21,15 @@ public class CardService {
         @GET("new/shuffle")
         Observable<Deck> getDeck(@Query("deck_count") int deck_count);
 
-        //GET CARDS
+        //GET CARD
         @GET("{deck_id}/draw")
         Observable<Card> getCard(@Path("deck_id") String deck_id, @Query("count") int count);
 
+        //GET CARDS
         @GET("{deck_id}/draw")
         Observable<Cards> getCards(@Path("deck_id") String deck_id, @Query("count") int count);
 
+        //SHUFFLEDECK
         @GET("{deck_id}/shuffle")
         Observable<Deck> shuffleDeck(@Path("deck_id")String deck_id);
     }

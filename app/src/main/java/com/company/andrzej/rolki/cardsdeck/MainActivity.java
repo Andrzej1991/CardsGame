@@ -18,16 +18,17 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
-import com.company.andrzej.rolki.cardsdeck.Component.DaggerServiceComponent;
-import com.company.andrzej.rolki.cardsdeck.Component.ServiceComponent;
-import com.company.andrzej.rolki.cardsdeck.Module.ServiceModule;
 import com.company.andrzej.rolki.cardsdeck.adapters.CardsRecyclerView;
+import com.company.andrzej.rolki.cardsdeck.component.DaggerServiceComponent;
+import com.company.andrzej.rolki.cardsdeck.component.ServiceComponent;
 import com.company.andrzej.rolki.cardsdeck.model.Card;
 import com.company.andrzej.rolki.cardsdeck.model.Cards;
 import com.company.andrzej.rolki.cardsdeck.model.Deck;
+import com.company.andrzej.rolki.cardsdeck.module.ServiceModule;
 import com.company.andrzej.rolki.cardsdeck.service.CardService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -76,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
     private int checkFiguryRank = 0;
     private int checkCardsBlackInt = 0;
     private int checkCardsRedInt = 0;
+    private int position = 0;
+    List<Integer> cardsValues = new ArrayList<>();
+    private boolean isChecked = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,14 +98,6 @@ public class MainActivity extends AppCompatActivity {
         configureRecyclerView();
     }
 
-    private void configureRecyclerView() {
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 5);
-        recyclerView.setLayoutManager(layoutManager);
-        cardsRecyclerView = new CardsRecyclerView(getApplicationContext(), imgUrls);
-        recyclerView.setAdapter(cardsRecyclerView);
-    }
-
-
     private void getCards(final String deck_id, final int count) {
         cardApi.getCards(deck_id, count)
                 .subscribeOn(Schedulers.newThread())
@@ -117,14 +113,15 @@ public class MainActivity extends AppCompatActivity {
                         cardsArray = cards.getArrayCards();
                         for (Card item : cardsArray) {
                             imgUrls.add(item.getImage());
+                            cardsValues.add(item.getRank());
                         }
                         cardsRemaining = cards.getRemaining();
                         cardsRecyclerView.notifyDataSetChanged();
                         recyclerView.smoothScrollToPosition(cardsRecyclerView.getItemCount());
                         checkFiguryAchievement();
                         checkColorAchievement();
-
-
+//                        checkAscendingOrDescendingAchievement();
+                        checkDuplicateAchievement();
                     }
 
                     @Override
@@ -138,9 +135,56 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void checkSchodkiAchievement(){
-        Card card = new Card();
+    private void checkDuplicateAchievement() {
+        Collections.sort(cardsValues);
+        countIntem(cardsValues);
+    }
 
+    public void countIntem(List<Integer> list) {
+        List<Integer> notDupes = new ArrayList<>();
+        List<Integer> duplicates = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (!notDupes.contains(list.get(i))) {
+                notDupes.add(list.get(i));
+                continue;
+            }
+            duplicates.add(list.get(i));
+            Collections.sort(duplicates);
+            findDuplicates(duplicates);
+        }
+    }
+
+    public void findDuplicates(List<Integer> listContainingDuplicates) {
+        if (isChecked) {
+            int previous = listContainingDuplicates.get(0) - 1;
+            int dupCount = 0;
+            for (int i = 0; i < listContainingDuplicates.size(); ++i) {
+                if (listContainingDuplicates.get(i) == previous) {
+                    ++dupCount;
+                } else {
+                    previous = listContainingDuplicates.get(i);
+                }
+            }
+            if (dupCount == 1) {
+                Utils.showToast(getApplicationContext(), "DUPLICATED");
+                isChecked = false;
+            }
+        }
+
+
+    }
+
+
+    private void checkAscendingOrDescendingAchievement() {
+
+        Card card1 = cardsArray.get(position);
+        Card card2 = cardsArray.get(position);
+        if (card1.isBigger(card2)) {
+            Utils.showToast(getApplicationContext(), "Bigger");
+        }
+        if (card1.isLesser(card2)) {
+            Utils.showToast(getApplicationContext(), "Lesser");
+        }
     }
 
     private void checkColorAchievement() {
@@ -233,18 +277,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-
-    @OnClick(R.id.buttonStart)
-    public void openGameFragment() {
-        if (!Utils.checkInternetConnection(this.getApplicationContext())) {
-            Utils.showToast(this.getApplicationContext(), "Please check internet connetion...");
-        } else {
-            int count = (int) spinnerDecks.getSelectedItem();
-            getDecks(count);
-            configureRetrofitRequest();
-        }
-    }
-
     private void createAlertDialogForShuffle() {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.myDialog));
         builder.setMessage("Are you sure to shuffle the decks?");
@@ -269,8 +301,20 @@ public class MainActivity extends AppCompatActivity {
         pbutton.setTextColor(Color.BLACK);
     }
 
+    @OnClick(R.id.buttonStart)
+    public void openGameFragment() {
+        if (!Utils.checkInternetConnection(this.getApplicationContext())) {
+            Utils.showToast(this.getApplicationContext(), "Please check internet connetion...");
+        } else {
+            int count = (int) spinnerDecks.getSelectedItem();
+            getDecks(count);
+            configureRetrofitRequest();
+        }
+    }
+
     @OnClick(R.id.get_next_card)
     public void nextCard() {
+        cardsValues.size();
         if (cardsRemaining == 0) {
             cardsRemaining = 2;
             createAlertDialogForShuffle();
@@ -298,5 +342,12 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
             }
         }, 2000);
+    }
+
+    private void configureRecyclerView() {
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(), 5);
+        recyclerView.setLayoutManager(layoutManager);
+        cardsRecyclerView = new CardsRecyclerView(getApplicationContext(), imgUrls);
+        recyclerView.setAdapter(cardsRecyclerView);
     }
 }

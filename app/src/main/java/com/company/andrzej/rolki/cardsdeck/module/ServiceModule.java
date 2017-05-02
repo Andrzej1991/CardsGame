@@ -1,4 +1,4 @@
-package com.company.andrzej.rolki.cardsdeck.Module;
+package com.company.andrzej.rolki.cardsdeck.module;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 

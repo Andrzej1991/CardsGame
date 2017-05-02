@@ -1,7 +1,5 @@
 package com.company.andrzej.rolki.cardsdeck.model;
 
-import android.support.annotation.NonNull;
-
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
@@ -10,6 +8,7 @@ import com.google.gson.stream.JsonWriter;
 import com.google.gson.stream.MalformedJsonException;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -18,7 +17,7 @@ import static java.util.Arrays.asList;
  * Created by Andrzej on 2017-04-28.
  */
 
-public final class Card implements Comparable<Card> {
+public final class Card implements Comparator<Card> {
 
     public String getImage() {
         return image;
@@ -37,23 +36,26 @@ public final class Card implements Comparable<Card> {
     }
 
     @SerializedName("image")
-    private final String image = null;
+    final String image = null;
     @SerializedName("value")
     @JsonAdapter(RankTypeAdapter.class)
-    private final int rank = 0;
+    final int rank = Integer.valueOf(0);
     @SerializedName("suit")
-    private final Suit suit = null;
+    final Suit suit = null;
     @SerializedName("code")
-    private final String code = null;
+    final String code = null;
 
     @Override
-    public int compareTo(@NonNull Card other) {
-        if(this.rank == ((Card) other).rank){
-            return 0;
-        }else if((this.rank) > ((Card) other).rank){
-            return 1;
-        }else
-            return -1;
+    public int compare(Card o1, Card o2) {
+        return Integer.compare(o1.getRank(), o2.getRank());
+    }
+
+    public boolean isLesser(Card other) {
+        return compare(this, other) > 0;
+    }
+
+    public boolean isBigger(Card other) {
+        return compare(this, other) < 0;
     }
 }
 

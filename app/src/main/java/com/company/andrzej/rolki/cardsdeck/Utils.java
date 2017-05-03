@@ -9,13 +9,13 @@ import android.widget.Toast;
  * Created by Andrzej on 2017-05-02.
  */
 
-public class Utils {
+class Utils {
 
-    public static void showToast(Context context, String msg) {
+    static void showToast(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public static boolean checkInternetConnection(Context context) {
+    static boolean checkInternetConnection(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();

@@ -26,7 +26,6 @@ import com.company.andrzej.rolki.cardsdeck.model.Card;
 import com.company.andrzej.rolki.cardsdeck.model.CardsArray;
 import com.company.andrzej.rolki.cardsdeck.model.Deck;
 import com.company.andrzej.rolki.cardsdeck.module.ServiceModule;
-import com.company.andrzej.rolki.cardsdeck.presenters.MainActivityPresenter;
 import com.company.andrzej.rolki.cardsdeck.service.CardService;
 
 import java.util.ArrayList;
@@ -87,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
     private int checkFiguryRank = 0;
     private int checkCardsBlackInt = 0;
     private int checkCardsRedInt = 0;
-    private MainActivityPresenter presenter;
     private boolean isCheckedForDuplicates = true;
     private boolean isCheckedForFigury = true;
     private boolean isCheckedColorRed = true;
@@ -103,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         configureSpinnerData();
         configureRecyclerView();
-        presenter = new MainActivityPresenter(this);
-        presenter.onAttachActivity(savedInstanceState, this);
         injectServiceComponent();
     }
 
@@ -155,6 +151,62 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onComplete() {
+                    }
+                });
+    }
+
+    public void getDecks(final int count) {
+        cardApi.fetchDeck(count)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Deck>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Deck deck) {
+                        deckID = deck.getDeck_id();
+                        getCards(deckID, 5);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void shuffleDeck(final String deck_id) {
+        cardApi.shuffleDeck(deck_id)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Deck>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Deck deck) {
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
                     }
                 });
     }
@@ -244,39 +296,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getDecks(final int count) {
-        cardApi.fetchDeck(count)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Deck>() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@NonNull Deck deck) {
-                        deckID = deck.getDeck_id();
-                        getCards(deckID, 5);
-                    }
-
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
-    }
 
     private void createAlertDialogForShuffle() {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper
                 (this, R.style.myDialog));
         builder.setMessage(this.getString(R.string.are_you_sure_shuffle));
-        builder.setPositiveButton(android.R.string.yes, (dialog, which) -> presenter.shuffleDeck(deckID));
+        builder.setPositiveButton(android.R.string.yes, (dialog, which) -> shuffleDeck(deckID));
         builder.setNegativeButton(android.R.string.no, (dialog, which) -> finish());
         builder.setIcon(android.R.drawable.ic_dialog_alert);
         AlertDialog alert = builder.create();
@@ -287,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
         pbutton.setTextColor(Color.BLACK);
     }
+
 
     @OnClick(R.id.buttonStart)
     public void startGame() {
@@ -325,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
             linearMain.setVisibility(View.GONE);
             linearSecond.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
-        }, 2000);
+        }, 2500);
     }
 
     private void configureRecyclerView() {

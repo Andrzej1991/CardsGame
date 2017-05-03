@@ -91,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean isCheckedColorRed = true;
     private boolean isCheckedColorBlack = true;
 
+//    można dodatkowo przenieść z MainActivity do presentera, ale jest to mały projekt
+//    nie udało mi się zrobić podzadania "schodki" zostawiłem metody, którymi
+//    próbowałem to zrobić
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -296,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void createAlertDialogForShuffle() {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper
                 (this, R.style.myDialog));
@@ -312,7 +315,6 @@ public class MainActivity extends AppCompatActivity {
         Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
         pbutton.setTextColor(Color.BLACK);
     }
-
 
     @OnClick(R.id.buttonStart)
     public void startGame() {

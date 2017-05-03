@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         cardApi = retrofit.create(CardService.CardAPI.class);
     }
 
-    private void getCards(final String deck_id, final int count) {
+    private void fetchCards(final String deck_id, final int count) {
         cardApi.fetchCardsFromDeckID(deck_id, count)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void getDecks(final int count) {
+    public void fetchDeck(final int count) {
         cardApi.fetchDeck(count)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onNext(@NonNull Deck deck) {
                         deckID = deck.getDeck_id();
-                        getCards(deckID, 5);
+                        fetchCards(deckID, 5);
                     }
 
                     @Override
@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
             Utils.showToast(this.getApplicationContext(), this.getString(R.string.internet_check));
         } else {
             int count = (int) spinnerDecks.getSelectedItem();
-            getDecks(count);
+            fetchDeck(count);
             configureHandlerForGetDecks();
         }
     }
@@ -335,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
             createAlertDialogForShuffle();
             Utils.showToast(this.getApplicationContext(), this.getString(R.string.please_shuffle));
         } else {
-            getCards(deckID, 1);
+            fetchCards(deckID, 1);
             cardsRemaining--;
         }
     }

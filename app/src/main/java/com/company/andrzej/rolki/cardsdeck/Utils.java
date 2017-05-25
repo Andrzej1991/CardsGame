@@ -21,4 +21,12 @@ class Utils {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+    static boolean isPasswordValid(String password) {
+        return password.length() > 6;
+    }
+
+    static boolean isEmailValid(String email) {
+        return email.contains("@");
+    }
 }

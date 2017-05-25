@@ -19,6 +19,16 @@ import static java.util.Arrays.asList;
 
 public final class Card implements Comparator<Card> {
 
+    @SerializedName("image")
+    final String image = null;
+    @SerializedName("value")
+    @JsonAdapter(RankTypeAdapter.class)
+    final int rank = 0;
+    @SerializedName("suit")
+    final Suit suit = null;
+    @SerializedName("code")
+    final String code = null;
+
     public String getImage() {
         return image;
     }
@@ -35,16 +45,6 @@ public final class Card implements Comparator<Card> {
         return code;
     }
 
-    @SerializedName("image")
-    final String image = null;
-    @SerializedName("value")
-    @JsonAdapter(RankTypeAdapter.class)
-    final int rank = Integer.valueOf(0);
-    @SerializedName("suit")
-    final Suit suit = null;
-    @SerializedName("code")
-    final String code = null;
-
     @Override
     public int compare(Card o1, Card o2) {
         return Integer.compare(o1.getRank(), o2.getRank());
@@ -60,9 +60,9 @@ public final class Card implements Comparator<Card> {
 }
 
 enum Suit {
-    @SuppressWarnings("SPADES")SPADES,
+    @SerializedName("SPADES")SPADES,
     @SerializedName("HEARTS")HEARTS,
-    @SuppressWarnings("DIAMONDS")DIAMONDS,
+    @SerializedName("DIAMONDS")DIAMONDS,
     @SerializedName("CLUBS")CLUBS
 }
 

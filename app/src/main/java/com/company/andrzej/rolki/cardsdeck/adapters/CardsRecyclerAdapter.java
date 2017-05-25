@@ -15,7 +15,7 @@ import java.util.List;
  * Created by Andrzej on 2017-05-01.
  */
 
-public class CardsRecyclerView extends RecyclerView.Adapter<CardsRecyclerView.ViewHolder> {
+public class CardsRecyclerAdapter extends RecyclerView.Adapter<CardsRecyclerAdapter.ViewHolder> {
 
     private List<String> cards;
     private Context context;
@@ -31,19 +31,19 @@ public class CardsRecyclerView extends RecyclerView.Adapter<CardsRecyclerView.Vi
     }
 
     @Override
-    public CardsRecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CardsRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ImageView v = (ImageView) LayoutInflater.from(parent.getContext()).inflate(R.layout.imt_image, parent, false);
         return new ViewHolder(v);
     }
 
-    public CardsRecyclerView(Context context, List<String> cards) {
+    public CardsRecyclerAdapter(Context context, List<String> cards) {
         this.context = context;
         this.cards = cards;
         notifyDataSetChanged();
     }
 
     @Override
-    public void onBindViewHolder(CardsRecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(CardsRecyclerAdapter.ViewHolder holder, int position) {
         Picasso.with(context).load(cards.get(position)).into(holder.imageView);
     }
 

@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
-import com.company.andrzej.rolki.cardsdeck.adapters.CardsRecyclerView;
+import com.company.andrzej.rolki.cardsdeck.adapters.CardsRecyclerAdapter;
 import com.company.andrzej.rolki.cardsdeck.component.DaggerServiceComponent;
 import com.company.andrzej.rolki.cardsdeck.component.ServiceComponent;
 import com.company.andrzej.rolki.cardsdeck.model.Card;
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchCards(final String deck_id, final int count) {
         cardApi.fetchCardsFromDeckID(deck_id, count)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<CardsArray>() {
                     @Override
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                         cardsRecyclerView.notifyDataSetChanged();
                         recyclerView.smoothScrollToPosition(cardsRecyclerView.getItemCount());
                         if (isCheckedForFigury) {
-                            checkFiguryAchievement();
+                            checkFiguresAchievement();
                         }
                         if (isCheckedColorBlack || isCheckedColorRed) {
                             checkColorAchievement();
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        Utils.showToast(getApplicationContext(), "Check your Internet Connection");
                     }
 
                     @Override
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void fetchDeck(final int count) {
         cardApi.fetchDeck(count)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Deck>() {
                     @Override
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
+                        Utils.showToast(getApplicationContext(), "Check your Internet Connection");
                     }
 
                     @Override
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void shuffleDeck(final String deck_id) {
         cardApi.shuffleDeck(deck_id)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Deck>() {
                     @Override
@@ -204,8 +204,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
-
+                        Utils.showToast(getApplicationContext(), "Check your Internet Connection");
                     }
 
                     @Override
@@ -287,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkFiguryAchievement() {
+    private void checkFiguresAchievement() {
         for (int i = 0; i < cardsArrayList.size(); i++) {
             int cardRankFigury = cardsArrayList.get(i).getRank();
             if (cardRankFigury >= 11)
@@ -360,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager
                 (getApplicationContext(), 5);
         recyclerView.setLayoutManager(layoutManager);
-        cardsRecyclerView = new CardsRecyclerView(getApplicationContext(), imgUrls);
+        cardsRecyclerView = new CardsRecyclerAdapter(getApplicationContext(), imgUrls);
         recyclerView.setAdapter(cardsRecyclerView);
     }
 }

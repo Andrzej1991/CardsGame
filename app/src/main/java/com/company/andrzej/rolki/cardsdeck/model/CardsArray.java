@@ -7,6 +7,10 @@ import java.util.List;
  */
 
 public class CardsArray {
+    private boolean succes;
+    private List<Card> cards;
+    private String deck_id;
+    private int remaining;
 
     public boolean isSucces() {
         return succes;
@@ -39,9 +43,4 @@ public class CardsArray {
     public void setRemaining(int remaining) {
         this.remaining = remaining;
     }
-
-    private boolean succes;
-    private List<Card> cards;
-    private String deck_id;
-    private int remaining;
 }

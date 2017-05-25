@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "320757530434",
+    "firebase_url": "https://cardsdeck-111ea.firebaseio.com",
+    "project_id": "cardsdeck-111ea",
+    "storage_bucket": "cardsdeck-111ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320757530434:android:38db0d91a91ddebf",
+        "android_client_info": {
+          "package_name": "com.company.andrzej.rolki.cardsdeck"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320757530434-ujoq94gbk1esdn05u8nrcma0cnf7is4j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCEdcEj_nUMvDcoYzLn-ImsJ9GhHORwlw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

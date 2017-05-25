@@ -1,6 +1,7 @@
 package com.company.andrzej.rolki.cardsdeck;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.company.andrzej.rolki.cardsdeck.adapters.CardsRecyclerAdapter;
 import com.company.andrzej.rolki.cardsdeck.component.DaggerServiceComponent;
@@ -27,6 +29,8 @@ import com.company.andrzej.rolki.cardsdeck.model.CardsArray;
 import com.company.andrzej.rolki.cardsdeck.model.Deck;
 import com.company.andrzej.rolki.cardsdeck.module.ServiceModule;
 import com.company.andrzej.rolki.cardsdeck.service.CardService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView achieFigures;
     @BindView(R.id.image_achievement_twins)
     ImageView achieTwins;
+    @BindView(R.id.welcomeUser)
+    TextView welcomeUser;
 
     ServiceComponent serviceComponent;
 
@@ -90,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isCheckedForFigury = true;
     private boolean isCheckedColorRed = true;
     private boolean isCheckedColorBlack = true;
+    private FirebaseAuth firebaseAuth;
 
 //    można dodatkowo przenieść z MainActivity do presentera, ale jest to mały projekt
 //    nie udało mi się zrobić podzadania "schodki" zostawiłem metody, którymi
@@ -105,6 +112,15 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         configureSpinnerData();
         configureRecyclerView();
+        firebaseAuth = FirebaseAuth.getInstance();
+        if (firebaseAuth.getCurrentUser() == null) {
+            finish();
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        welcomeUser.setText("Welcome " + user.getEmail());
+
         injectServiceComponent();
     }
 

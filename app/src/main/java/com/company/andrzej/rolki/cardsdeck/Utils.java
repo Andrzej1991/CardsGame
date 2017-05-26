@@ -9,7 +9,7 @@ import android.widget.Toast;
  * Created by Andrzej on 2017-05-02.
  */
 
-class Utils {
+public class Utils {
 
     static void showToast(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
@@ -22,11 +22,11 @@ class Utils {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    static boolean isPasswordValid(String password) {
+    public static boolean isPasswordValid(String password) {
         return password.length() > 6;
     }
 
-    static boolean isEmailValid(String email) {
+    public static boolean isEmailValid(String email) {
         return email.contains("@");
     }
 }

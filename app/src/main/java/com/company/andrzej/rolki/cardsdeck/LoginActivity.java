@@ -78,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
 
+
                         if (task.isSuccessful()) {
                             //start the game activity
                             finish();

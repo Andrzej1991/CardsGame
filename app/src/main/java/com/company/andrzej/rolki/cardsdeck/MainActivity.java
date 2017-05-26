@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
     TextView welcomeUser;
 
     ServiceComponent serviceComponent;
-
     @Inject
     Retrofit retrofit;
 
